@@ -4,13 +4,13 @@
         _type_: _description_
     """
 
-import re
-import requests
-import duckdb
-from dotenv import load_dotenv, dotenv_values, set_key
+from re import sub
 
+from dotenv import dotenv_values, load_dotenv, set_key
+from duckdb import connect
+from requests import get, post
 
-con = duckdb.connect(database="major_copenhagen_2024.db")
+con = connect(database="major_copenhagen_2024.db")
 
 
 load_dotenv()
@@ -30,7 +30,7 @@ def get_head():
 
 
 head = get_head()
-request = requests.get(
+request = get(
     url="https://api.twitch.tv/helix/streams", params={"game_id": "32399"}, headers=head
 )
 
@@ -70,7 +70,7 @@ def insert_stream(id_streamer, title, started_at, id):
     Returns:
         _type_: _description_
     """
-    query_insert = f""" INSERT INTO major_copenhagen_2024.main.stream 
+    query_insert = f""" INSERT INTO major_copenhagen_2024.main.stream
     (id_streamer, title, started_at, id) VALUES({id_streamer}, '{title}', '{started_at}', {id})"""
     con.execute(query_insert)
 
@@ -95,7 +95,8 @@ def insert_stream_view(id_stream, viewer_count):
     Returns:
         _type_: _description_
     """
-    query_insert = f""" INSERT INTO major_copenhagen_2024.main.views_stream (id_stream, viewer_count)
+    query_insert = f""" INSERT INTO major_copenhagen_2024.main.views_stream 
+            (id_stream, viewer_count)
             VALUES({id_stream}, '{viewer_count}')"""
     con.execute(query_insert)
 
@@ -108,7 +109,7 @@ def validate_token():
     """
     acess_token = dotenv_values()["ACESS_TOKEN"]
     head = {"Authorization": "OAuth " + acess_token}
-    response = requests.get(url="https://id.twitch.tv/oauth2/token", headers=head)
+    response = get(url="https://id.twitch.tv/oauth2/token", headers=head)
     return response
 
 
@@ -122,7 +123,7 @@ def get_new_token():
     client_secret = dotenv_values()["CLIENT_SECRET"]
 
     params = f"client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials"
-    token = requests.post(url="https://id.twitch.tv/oauth2/token", params=params)
+    token = post(url="https://id.twitch.tv/oauth2/token", params=params)
     acess_token = token.json()["access_token"]
     set_key("./.env", "ACESS_TOKEN", acess_token)
 
@@ -138,7 +139,7 @@ else:
         user_name_streamer = streamer["user_name"]
         language_streamer = streamer["language"]
 
-        title_stream = re.sub(r'[.,"\'-?:!;]', "", streamer["title"])
+        title_stream = sub(r'[.,"\'-?:!;]', "", streamer["title"])
         started_at_stream = streamer["started_at"]
         id_stream = streamer["id"]
 
