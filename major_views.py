@@ -64,14 +64,14 @@ def analyser_stream(id_stream):
     return con.execute(f"SELECT id from stream where id = {id_stream}").fetchone()
 
 
-def insert_stream(id_streamer, title, started_at, id):
+def insert_stream(id_streamer, title, started_at, id_stream):
     """_summary_
 
     Returns:
         _type_: _description_
     """
     query_insert = f""" INSERT INTO major_copenhagen_2024.main.stream
-    (id_streamer, title, started_at, id) VALUES({id_streamer}, '{title}', '{started_at}', {id})"""
+    (id_streamer, title, started_at, id) VALUES({id_streamer}, '{title}', '{started_at}', {id_stream})"""
     con.execute(query_insert)
 
 
@@ -108,8 +108,8 @@ def validate_token():
         _type_: _description_
     """
     acess_token = dotenv_values()["ACESS_TOKEN"]
-    head = {"Authorization": "OAuth " + acess_token}
-    response = get(url="https://id.twitch.tv/oauth2/token", headers=head)
+    head_validation = {"Authorization": "OAuth " + acess_token}
+    response = get(url="https://id.twitch.tv/oauth2/token", headers=head_validation)
     return response
 
 
