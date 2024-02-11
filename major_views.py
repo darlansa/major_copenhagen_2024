@@ -71,7 +71,8 @@ def insert_stream(id_streamer, title, started_at, id_stream):
         _type_: _description_
     """
     query_insert = f""" INSERT INTO major_copenhagen_2024.main.stream
-    (id_streamer, title, started_at, id) VALUES({id_streamer}, '{title}', '{started_at}', {id_stream})"""
+    (id_streamer, title, started_at, id)
+    VALUES({id_streamer}, '{title}', '{started_at}', {id_stream})"""
     con.execute(query_insert)
 
 
