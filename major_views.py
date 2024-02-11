@@ -1,7 +1,13 @@
-import requests
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+
 import re
-from dotenv import load_dotenv, dotenv_values, set_key
+import requests
 import duckdb
+from dotenv import load_dotenv, dotenv_values, set_key
 
 
 con = duckdb.connect(database="major_copenhagen_2024.db")
@@ -11,6 +17,11 @@ load_dotenv()
 
 
 def get_head():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     head = {
         "Authorization": "Bearer " + dotenv_values()["ACESS_TOKEN"],
         "Client-Id": dotenv_values()["CLIENT_ID"],
@@ -25,35 +36,76 @@ request = requests.get(
 
 
 def analyser_streamer(user_id):
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     return con.execute(f"SELECT id from streamers where id = {user_id}").fetchone()
 
 
 def insert_streamer(user_id, user_name, language):
-    query_insert = f""" INSERT INTO major_copenhagen_2024.main.streamers (id, user_name, language) VALUES({user_id}, '{user_name}', '{language}')"""
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    query_insert = f""" INSERT INTO major_copenhagen_2024.main.streamers
+    (id, user_name, language) VALUES({user_id}, '{user_name}', '{language}')"""
     con.execute(query_insert)
 
 
 def analyser_stream(id):
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     return con.execute(f"SELECT id from stream where id = {id}").fetchone()
 
 
 def insert_stream(id_streamer, title, started_at, id):
-    query_insert = f""" INSERT INTO major_copenhagen_2024.main.stream (id_streamer, title, started_at, id) VALUES({id_streamer}, '{title}', '{started_at}', {id})"""
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    query_insert = f""" INSERT INTO major_copenhagen_2024.main.stream 
+    (id_streamer, title, started_at, id) VALUES({id_streamer}, '{title}', '{started_at}', {id})"""
     con.execute(query_insert)
 
 
 def analyser_stream_view(id_stream, viewer_count):
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     return con.execute(
-        f"SELECT id_stream from views_stream where id_stream = {id_stream} and viewer_count = {viewer_count}"
+        f"""SELECT id_stream 
+            from views_stream 
+            where id_stream = {id_stream} 
+            and viewer_count = {viewer_count}"""
     ).fetchone()
 
 
 def insert_stream_view(id_stream, viewer_count):
-    query_insert = f""" INSERT INTO major_copenhagen_2024.main.views_stream (id_stream, viewer_count) VALUES({id_stream}, '{viewer_count}')"""
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    query_insert = f""" INSERT INTO major_copenhagen_2024.main.views_stream (id_stream, viewer_count)
+            VALUES({id_stream}, '{viewer_count}')"""
     con.execute(query_insert)
 
 
 def validate_token():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     acess_token = dotenv_values()["ACESS_TOKEN"]
     head = {"Authorization": "OAuth " + acess_token}
     response = requests.get(url="https://id.twitch.tv/oauth2/token", headers=head)
@@ -61,6 +113,11 @@ def validate_token():
 
 
 def get_new_token():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     client_id = dotenv_values()["CLIENT_ID"]
     client_secret = dotenv_values()["CLIENT_SECRET"]
 
@@ -106,4 +163,3 @@ else:
             id_stream=id_stream, viewer_count=viewer_count_stream
         ):
             insert_stream_view(id_stream=id_stream, viewer_count=viewer_count_stream)
-        print("oi")
