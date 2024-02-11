@@ -31,7 +31,10 @@ def get_head():
 
 head = get_head()
 request = get(
-    url="https://api.twitch.tv/helix/streams", params={"game_id": "32399"}, headers=head
+    url="https://api.twitch.tv/helix/streams",
+    params={"game_id": "32399"},
+    headers=head,
+    timeout=5,
 )
 
 
@@ -110,7 +113,9 @@ def validate_token():
     """
     acess_token = dotenv_values()["ACESS_TOKEN"]
     head_validation = {"Authorization": "OAuth " + acess_token}
-    response = get(url="https://id.twitch.tv/oauth2/token", headers=head_validation)
+    response = get(
+        url="https://id.twitch.tv/oauth2/token", headers=head_validation, timeout=5
+    )
     return response
 
 
@@ -124,7 +129,7 @@ def get_new_token():
     client_secret = dotenv_values()["CLIENT_SECRET"]
 
     params = f"client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials"
-    token = post(url="https://id.twitch.tv/oauth2/token", params=params)
+    token = post(url="https://id.twitch.tv/oauth2/token", params=params, timeout=5)
     acess_token = token.json()["access_token"]
     set_key("./.env", "ACESS_TOKEN", acess_token)
 
